@@ -1,11 +1,11 @@
-use kagi_macros::{action, gateway, init, main, middleware, route, service};
-use kagi_node::{
+use runar_macros::{action, gateway, init, main, middleware, route, service};
+use runar_node::{
     anyhow::{self, Result},
     async_trait::async_trait,
     node::NodeConfig,
     Node,
 };
-use kagi_gateway::{
+use runar_gateway::{
     Gateway, GatewayConfig, Next, hyper::{Request, Response, Body}
 };
 use serde::{Deserialize, Serialize};
@@ -158,9 +158,9 @@ async fn main() -> Result<()> {
     let user_service = UserService::new().await?;
     let api_gateway = ApiGateway::new().await?;
     
-    // Register services with the node
-    node.register_service("user_service", user_service).await?;
-    node.register_service("api_gateway", api_gateway).await?;
+    // Register services with the node using the proper add_service method
+    node.add_service(user_service).await?;
+    node.add_service(api_gateway).await?;
     
     // Start the node which will manage all services
     node.start().await?;

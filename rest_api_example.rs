@@ -1,11 +1,11 @@
-use kagi_macros::{action, gateway, init, main, rest_api, service};
-use kagi_node::{
+use runar_macros::{action, gateway, init, main, rest_api, service};
+use runar_node::{
     anyhow::{self, Result},
     async_trait::async_trait,
     node::NodeConfig,
     Node,
 };
-use kagi_gateway::GatewayConfig;
+use runar_gateway::GatewayConfig;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -274,10 +274,10 @@ async fn main() -> Result<()> {
     let customer_service = CustomerService::new().await?;
     let api_gateway = ApiGateway::new().await?;
     
-    // Register services with the node
-    node.register_service("invoice_service", invoice_service).await?;
-    node.register_service("customer_service", customer_service).await?;
-    node.register_service("api_gateway", api_gateway).await?;
+    // Register services with the node using the proper add_service method
+    node.add_service(invoice_service).await?;
+    node.add_service(customer_service).await?;
+    node.add_service(api_gateway).await?;
     
     // Start the node which will manage all services
     node.start().await?;

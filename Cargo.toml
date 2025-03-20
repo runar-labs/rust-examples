@@ -1,36 +1,23 @@
 [package]
-name = "kagi_examples"
+name = "runar-examples"
 version = "0.1.0"
 edition = "2021"
-description = "Examples for Kagi node system"
+description = "Examples for the Runar framework"
+authors = ["Runar Labs Team"]
 publish = false
 
-[[example]]
-name = "macros_example"
-path = "macros_example.rs"
-
-[[example]]
-name = "macros_node_example"
-path = "macros_node_example.rs"
-
-[[example]]
-name = "gateway_example"
-path = "gateway_example.rs"
-
-[[example]]
-name = "rest_api_example"
-path = "rest_api_example.rs"
-
 [dependencies]
-kagi_macros = { path = "../kagi_macros", features = ["node_implementation"] }
-kagi_node = { path = "../node" }
-kagi_common = { path = "../common" }
-kagi_utils = { path = "../utils" }
+runar_node = { path = "../rust-node" }
+runar_common = { path = "../rust-common" }
+runar_macros = { path = "../rust-macros" }
 anyhow = "1.0"
+async-trait = "0.1"
 tokio = { version = "1.0", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+tempfile = "3.8"
+uuid = { version = "1.5", features = ["v4"] }
 chrono = "0.4"
-rand = "0.8"
-async-trait = "0.1"
-uuid = { version = "1.0", features = ["v4"] } 
+
+# The examples will automatically be discovered in the examples directory
+# No need to explicitly list them when using the standard Cargo examples directory structure 

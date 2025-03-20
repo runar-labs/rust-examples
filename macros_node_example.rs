@@ -1,5 +1,5 @@
 /**
- * Example file demonstrating service implementation and Node API usage in KAGI.
+ * Example file demonstrating service implementation and Node API usage in Runar.
  * 
  * This file shows how to:
  * 1. Create services that implement AbstractService
@@ -9,7 +9,7 @@
  */
 
 use anyhow::Result;
-use kagi_node::{
+use runar_node::{
     services::{
         AbstractService, RequestContext, ResponseStatus, ServiceResponse, 
         ServiceState, ServiceMetadata, ValueType, ServiceRequest
@@ -457,12 +457,12 @@ async fn main() -> Result<()> {
     println!("Starting Macros Node Example...");
     
     // Create a temporary directory for node data
-    let temp_dir = std::env::temp_dir().join("kagi_node_example");
+    let temp_dir = std::env::temp_dir().join("runar_node_example");
     let _ = std::fs::create_dir_all(&temp_dir);
     let db_path = temp_dir.join("node.db");
 
     // Create node config with only the fields it actually has
-    let node_config = kagi_node::NodeConfig {
+    let node_config = runar_node::NodeConfig {
         network_id: "example".to_string(),
         node_id: Some("example-node".to_string()),
         node_path: temp_dir.to_string_lossy().to_string(),
@@ -475,27 +475,24 @@ async fn main() -> Result<()> {
     };
     
     // Create the node
-    let mut node = kagi_node::node::Node::new(node_config).await?;
+    let mut node = runar_node::node::Node::new(node_config).await?;
     
     // Initialize the node
     node.init().await?;
     
-    // Create and register our services
+    // Create our services
     let mut data_service = DataProcessorService::new();
     let mut event_service = EventHandlerService::new();
     
-    // Initialize services with a request context
-    let registry = node.service_registry.clone();
-    let node_handler = Arc::new(kagi_node::node::NodeRequestHandlerImpl::new(registry.clone()));
-    let data_context = RequestContext::new("init", ValueType::Null, node_handler.clone());
-    let event_context = RequestContext::new("init", ValueType::Null, node_handler.clone());
+    // Initialize services
+    let context = node.create_request_context("init").await?;
     
-    data_service.init(&data_context).await?;
-    event_service.init(&event_context).await?;
+    data_service.init(&context).await?;
+    event_service.init(&context).await?;
     
-    // Register services with the registry
-    registry.register_service(Arc::new(data_service)).await?;
-    registry.register_service(Arc::new(event_service)).await?;
+    // Register services with the node using the proper add_service method
+    node.add_service(data_service).await?;
+    node.add_service(event_service).await?;
     
     // Start the services
     node.start_services().await?;
@@ -540,7 +537,7 @@ async fn main() -> Result<()> {
         ValueType::Map({
             let mut map = HashMap::new();
             map.insert("str1".to_string(), ValueType::String("Hello".to_string()));
-            map.insert("str2".to_string(), ValueType::String("KAGI World!".to_string()));
+            map.insert("str2".to_string(), ValueType::String("Runar World!".to_string()));
             map
         })
     ).await?;
