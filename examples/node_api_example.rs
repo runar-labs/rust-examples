@@ -270,21 +270,6 @@ impl AbstractService for EventHandlerService {
         "A service for handling and storing events"
     }
     
-    /// Returns service metadata including operations and version
-    fn metadata(&self) -> ServiceMetadata {
-        ServiceMetadata {
-            name: self.name().to_string(),
-            path: self.path().to_string(),
-            description: self.description().to_string(),
-            version: "1.0.0".to_string(),
-            operations: vec![
-                "get_events".to_string(), 
-                "store_event".to_string()
-            ],
-            state: self.state(),
-        }
-    }
-    
     /// Initializes the service when the node starts
     /// This is where subscriptions should be set up
     async fn init(&mut self, context: &RequestContext) -> Result<(), anyhow::Error> {
